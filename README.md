@@ -33,4 +33,6 @@ Using the Copilot chat, run `/figma-to-app` to kick off the skill's generation p
 5. If applicable, installs dependencies and starts the app
     - Can create a `.venv` to handle packages
 
-## 
+## End Product
+
+A Streamlit application runnable in Databricks apps at `{bundle_name}/src/app/app.yaml`
