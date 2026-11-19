@@ -1,0 +1,8 @@
+command:
+  - streamlit
+  - run
+  - app.py
+
+env:
+  - name: APP_TITLE
+    value: "Orbit"

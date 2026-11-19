@@ -18,3 +18,19 @@ This brought all the needed references into the repo for the agent to utilize in
 ## Step 2: Utilize existing bundle
 
 Since bundles can contain more than just the app itself, I created the bundle first under `test-app`.
+
+## Step 3: Skill Execution
+
+Using the Copilot chat, run `/figma-to-app` to kick off the skill's generation process:
+
+1. Gathers Figma context from step 1
+    - Expects those deliverables in `/docs/mockups/` but will ask the user for paths if deliverables aren't there
+2. Gathers input from the user about app specifications. Some examples:
+    - Do you want to start the app after generation?
+    - What components are static vs. non-static?
+3. Generates the app's source code and links it to the existing bundle
+4. Performs validation on the app (Python compile and syntax check)
+5. If applicable, installs dependencies and starts the app
+    - Can create a `.venv` to handle packages
+
+## 
