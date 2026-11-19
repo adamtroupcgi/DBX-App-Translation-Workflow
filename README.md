@@ -1,38 +1,39 @@
 # DBX-App-Translation-Workflow
 
-This is a test repo to explore a workflow that translates Figma deliverables into a functioning application (or at least front end) in Databricks Apps. Since Python knowledge is most applicable to Databricks engineers, Streamlit will be used for a Python-only solution.
+Use this repository to translate Figma deliverables into a Streamlit application for Databricks Apps. The workflow uses Python only and requires an existing Declarative Automation Bundle.
 
-## Step 1: Figma Deliverables
+## Step 1: Prepare Figma deliverables
 
-I created a mock Figma diagram using an agent to serve as an example. Once the diagram was complete, I:
+Provide a mockup image and a CSS export from Figma:
 
-1. Exported the Figma diagram as a png and dropped it in the repo: `docs/mockups/Translation Test Mockup.png`
-2. Copied the full CSS from the diagram editor:
-    - Select the entire Figma diagram using CTRL+A in the editor
-    - Right clicked the highlighted selection
-    - Clicked Copy/Paste as > Copy as code > CSS (all layers)
-    - Dumped the copied CSS into `docs/mockups/CSS_COPY_PASTE.md`
+1. Export the mockup as a PNG and save it under `docs/mockups/`, for example `docs/mockups/Translation Test Mockup.png`.
+2. In Figma, select the layers to export. Choose **Copy/Paste as > Copy as code > CSS (all layers)**.
+    - You can also use CTRL+A in the editor to select all components of the diagram.
+3. Save the copied CSS to `docs/mockups/CSS_COPY_PASTE.md`.
 
-This brought all the needed references into the repo for the agent to utilize in scaffolding the app.
+The skill looks in `docs/mockups/` for these files by default. If they are stored elsewhere, provide their paths when prompted.
 
-## Step 2: Utilize existing bundle
+## Step 2: Prepare the bundle
 
-Since bundles can contain more than just the app itself, I created the bundle first under `test-app`.
+Open an existing Declarative Automation Bundle, such as `test-app`. Its `databricks.yml` must include the app resource files (for example, `resources/*.yml`). The skill does not create a bundle.
 
-## Step 3: Skill Execution
+## Step 3: Run the skill
 
-Using the Copilot chat, run `/figma-to-app` to kick off the skill's generation process:
+In Copilot Chat, run `/figma-to-app`. The skill will:
 
-1. Gathers Figma context from step 1
-    - Expects those deliverables in `/docs/mockups/` but will ask the user for paths if deliverables aren't there
-2. Gathers input from the user about app specifications. Some examples:
-    - Do you want to start the app after generation?
-    - What components are static vs. non-static?
-3. Generates the app's source code and links it to the existing bundle
-4. Performs validation on the app (Python compile and syntax check)
-5. If applicable, installs dependencies and starts the app
-    - Can create a `.venv` to handle packages
+1. Read the mockup and CSS, locate the bundle, and ask about app behavior and naming.
+2. Present a dry run with the proposed layout, files, dependencies, and local run instructions. Review it and approve it before files are created.
+3. Generate a modular Streamlit app and its Databricks bundle resource configuration.
+4. Document how to create a local Python environment and run the app from a terminal. The skill uses an isolated `.venv` when no existing environment convention applies and ensures it is ignored by Git.
+5. Run local syntax/tests and validate the bundle. The skill starts the local app only if you opt in; deployment always requires a separate explicit request.
 
-## End Product
+## Run locally
 
-A Streamlit application runnable in Databricks apps at `{bundle_name}/src/app/app.yaml`
+From the bundle root, follow the local development commands added to its README. For the default setup, the app entry point is `src/app/app.py`.
+
+## Deploy to Databricks Apps
+
+The app runtime manifest is `{bundle_name}/src/app/app.yaml`, and the bundle resource is `{bundle_name}/resources/<app_key>.app.yml`. After validating the bundle, deploy it using either method:
+
+- In the Databricks Apps UI, create or edit an app and choose **Deploy from source**. Set the source to the directory containing `app.yaml` (for this repository, `test-app/src/app/`).
+- From the bundle root, use the Databricks CLI to validate and deploy the configured app resource.
